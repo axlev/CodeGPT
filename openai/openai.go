@@ -8,6 +8,8 @@ import (
 	"net/url"
 
 	"github.com/appleboy/CodeGPT/groq"
+	"github.com/fatih/color"
+	"github.com/spf13/viper"
 
 	openai "github.com/sashabaranov/go-openai"
 	"golang.org/x/net/proxy"
@@ -66,7 +68,6 @@ type Client struct {
 	maxTokens   int
 	temperature float32
 	isFuncCall  bool
-
 	// An alternative to sampling with temperature, called nucleus sampling,
 	// where the model considers the results of the tokens with top_p probability mass.
 	// So 0.1 means only the tokens comprising the top 10% probability mass are considered.
@@ -171,6 +172,12 @@ func (c *Client) Completion(
 	ctx context.Context,
 	content string,
 ) (*Response, error) {
+	// Be verbose in case verbose flag is true and print the content to the console.
+	// otherwise, tell me what the model is doing
+	if viper.GetBool("verbose") {
+		color.Cyan("VERBOSE PROMPT: " + content)
+	}
+
 	resp := &Response{}
 	switch c.model {
 	case openai.GPT3Dot5Turbo,

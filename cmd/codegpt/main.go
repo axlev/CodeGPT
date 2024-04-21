@@ -8,5 +8,6 @@ import (
 
 func main() {
 	m := graceful.NewManager()
+
 	cmd.Execute(m.ShutdownContext())
 }

@@ -23,6 +23,7 @@ var rootCmd = &cobra.Command{
 var (
 	cfgFile  string
 	replacer = strings.NewReplacer("-", "_", ".", "_")
+	verbose  bool
 )
 
 const (
@@ -34,6 +35,9 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/codegpt/.codegpt.yaml)")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
+	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
+
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(commitCmd)
@@ -101,7 +105,6 @@ func initConfig() {
 		}
 	}
 }
-
 func Execute(ctx context.Context) {
 	if _, err := rootCmd.ExecuteContextC(ctx); err != nil {
 		os.Exit(1)
